@@ -1,6 +1,8 @@
 body {
-    background-color: black;
-    color: white;
+    background-color: #212121;
+    color: #E0E0E0;
 }
 
-
+#home-header{
+    text-align: center;
+}
