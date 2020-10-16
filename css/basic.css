@@ -1,8 +1,14 @@
 body {
     background-color: #212121;
     color: #E0E0E0;
+    padding-left: 10%;
+    padding-right: 10%;
 }
 
 #home-header{
     text-align: center;
+}
+
+a {
+    color: #E0E0E0;
 }
