@@ -1,11 +1,16 @@
 body {
-    background-color: #212121;
+    font-family: sans-serif;
+        background-color: #212121;
     color: #E0E0E0;
     padding-left: 5%;
     padding-right: 5%;
 }
 
 #home-header{
+    text-align: center;
+}
+
+#post-top {
     text-align: center;
 }
 
