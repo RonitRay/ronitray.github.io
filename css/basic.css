@@ -1,5 +1,7 @@
 body {
     font-family: sans-serif;
+    background-color: black;
+    color: white;
     /*background-color: #2e3440;
     color: #d8dee9;*/
     padding-left: 5%;
@@ -15,5 +17,6 @@ body {
 }
 
 a {
-    color: #d8dee9;
+    /*color: #d8dee9;*/
+        color: green;
 }
