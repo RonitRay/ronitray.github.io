@@ -18,10 +18,10 @@ body {
 
 a {
     /*color: #d8dee9;*/
-    color: blue;
+    color: #00ccff;
 }
 
 a:hover{
     color: black;
-    background-color: blue;
+    background-color: #00ccff;
 }
