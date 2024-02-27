@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How I Handle My Passwords [Ronit Ray]</title>
+</head>
+<body>
+    <header>
+        <h1>How I Handle My Passwords</h1>
+    </header>
+    <div class="date">
+        2021-02-21 | <a href="/">Ronit Ray</a>
+    </div>
+    <main>
+        <p>This post comes in soon after <a href="https://blog.lastpass.com/2021/02/changes-to-lastpass-free/">LastPass announced</a> that they are restructuring their free tier to only allow access from one category of devices, i.e. only desktops or only mobile devices. I assume this will be a no-go for many users, and given the high (~$36/year) subscription costs, several people will be unwilling to upgrade to their premium offering.</p>
+<p>If you're not using a password manager, you're just asking for trouble, and/or putting in a lot of unnecessary effort memorizing several passwords when you could just remember one. My recommendation to anyone who is starting out or looking to switch from LastPass and wants a very similar experience is the excellent <a href="https://bitwarden.com/">Bitwarden</a>, a free and open source offering that offers most of the features you would need in their free tier and also a few premium options at roughly $10 a year. It is far from the only option though, there are several very good recommendations a simple web search will get you.</p>
+<h3>What Password Manager Do I Use?</h3>
+<p>I've been meaning to document the slightly eccentric way I manage my passwords for a while, so here goes. My password manager of choice is <a href="https://keepassxc.org/"><strong>KeepassXC</strong></a>. What do I like about it?</p>
+<ul>
+<li>
+<p>It is <strong>offline</strong>. You don't need to be connected to the internet to access your passwords or check secure notes.</p>
+</li>
+<li>
+<p>Everything is on a <strong>single file</strong>. While an argument can be made that it is a single point of failure and if the file is corrupted you lose all your passwords, I haven't really experienced or encountered any such issues in the few years I've been following news on password managers. Having the entire database be a single file is great for portability purposes.</p>
+</li>
+<li>
+<p>The option to use a <strong>keyfile</strong> alongside your password is great for security, and since any file can be a keyfile, it's a pretty good foil for someone who gains access to your computer by chance.</p>
+</li>
+<li>
+<p>It is <strong>open-source</strong>, audited, and has been around for years. This is, for me, a good enough marker of trust. Further, it's not a SaaS product so even if development on one KeePass client stops tomorrow, I lose essentially nothing. I can continue using the present version of the client indefinitely, or switch to a new client without changing much because the underlying standard remains the same.</p>
+</li>
+</ul>
+<h3>How Do I Store My Passwords?</h3>
+<p>I have a keepass .kdbx database and a 128bit keyfile. These lie in an encrypted <a href="https://www.veracrypt.fr/en/Home.html">Veracrypt</a> container on my PC that is dismounted until I need it.</p>
+<p>That would be the end of it if I only stuck to my PC, but I have a bad habit of using my phone for certain online accounts, and I also needed the security of having my passwords backed up in case my computer failed or was lost/stolen, or if I needed access to them in a pinch on some other device. Here's what I did to get around that.</p>
+<p><strong>For mobile</strong>, I use <a href="https://syncthing.net/"><strong>Syncthing</strong></a>. The password database is synced over Syncthing every once in a while, either manually when I add or update a password, or periodically to be safe. The keyfile doesn't go over Syncthing, I had transferred it offline over USB. Probably unnecessary, but I did it anyway. The Android client I use is <a href="https://www.keepassdx.com/"><strong>KeePassDX</strong></a>, although <a href="https://github.com/PhilippC/keepass2android">KeePass2Android</a> is a very good option too. Both have essentially the same feature set and are open-source and reliable. They support Android's native autofill, but since this is hit and miss on my current phone (a major pain point when I used to use LastPass,and then Bitwarden), I've taken to using the <strong>virtual keyboard</strong> provided by both these apps. Essentially, when you want to login, you select the entry from your vault and load the virtual keyboard. It will then fill in whatever field you want from your vault without using the clipboard or any nasty shenanigans. Clipboard hijacking is among the easiest ways to grab someone's password, and it is a nightmare on Android since <a href="https://www.aol.com/video/view/5f024c3f3092ab5c5b6f0441/">a ton of applications have been caught snooping on clipboard contents indiscriminately in the past.</a></p>
+<p><strong>Cloud</strong> backups have undeniable advantages, and the convenience factor for SaaS password vaults like LastPass, Dashlane etc is undeniable. Now, KeePass databases are encrypted using AES, so you should be good to go by just backing up said database over a cloud storage provider of your choice. Because I thrive on paranoia and I don't like making things easy for myself, I took this a step further and instead back up the veracrypt container rather than the database. This is presently done over Git but it can be replaced by pretty much any cloud storage provider. This way there are at least two layers of one of the most reliable encryption schemes we know that stand guard before my passwords. Of course, none of this matters if AES is broken in the near or distant future, but that is well outside my threat model at the moment.</p>
+<p>All this takes a good while to set up at first, but once you're set, I've found that you can pretty much go about your life painlessly and without any issues. Whether you go as far as I have or further is entirely dependent upon your threat model, but at the very least I definitely recommend using a password manager for everyone, from yourself to your grandparents. I'd always say an open-source option is the way to go, but mainstream proprietary products that have been around for a while, are unlikely to suddenly disappear, and have been audited are certainly much better than using no password manager at all.</p>
+
+    </main>    
+</body>
+<style>
+   :root {
+        --bg: white;
+        --fg: #080808;
+    }
+
+    body {
+        background: var(--bg);
+        color: var(--fg);
+        font-family: sans-serif;
+        font-size: 1em;
+        line-height: 1.5;
+        width: 90%;
+        max-width: 70ch;
+        margin: auto;
+    }
+
+    h1 {
+        font-size: 1.5em;
+    }
+
+    h2 {
+        font-size: 1.35em;
+    }
+
+    h3 {
+        font-size: 1.2em;
+    }
+
+    .post-listing {
+        margin: 1rem auto;
+    }
+
+    a, a:visited {
+        color: var(--fg);
+    }
+
+    .date {
+        font-style: italic;
+    }
+</style>
+</html>

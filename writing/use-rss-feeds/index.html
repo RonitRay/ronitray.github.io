@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/bundle.css" />
+    <title>Reclaim Control Over Your Content Consumption with RSS Feeds [Ronit Ray]</title>
+  </head>
+
+  <body>
+    
+<section class="content-container">
+  <header>
+    <h1 class="post-header">Reclaim Control Over Your Content Consumption with RSS Feeds</h1>
+  </header>
+  <div class="date">
+    2021-02-09 | <a href="/">Ronit Ray</a>
+  </div>
+  <main class="post-content"><p>This is part 1 in a two-part series on RSS feeds.</p>
+<p>The early internet was, I believe, truly ahead of its time. We have a lot more eye candy and fancy functionality today, that's for sure, but some of the most enduring ideas at the foundation of the internet are just a little younger than the internet itself. One of these is the RSS feed. No
+matter what your site is, what content you post, or how it looks, an RSS feed is able to standardize its contents into a single XML file that can then be used to track updates, or what we have come to call &quot;follow&quot; you.</p>
+<p>My understanding is that RSS feed usage peaked during the peak of Google Reader in the mid-2000s. It seems to have all been downhill since then. Today, RSS has a small but faithful fanbase, and though it is seeing a silent resurgence by being the backend for podcasts, it has largely been
+relegated to oblivion. I feel like there are two major reasons to this.</p>
+<p>The first is that RSS being simple yet flexible means it affords a great deal of control to the site owner as well as the follower over how they want to follow and consume content. You can view the entire post without leaving your feed reader, or can see a short summary and then jump straight to the site to read the rest of the post. This freedom and control is antithetical to the foundation of modern social networks, which rely heavily on addictive patterns and engaging UX shenanigans to keep you immersed and engaged on the platform for as long as possible. They need you to let them curate what you see, and to keep scrolling so they can serve you ads and make money off you. It was never about the content, or at least it hasn't been for a while and is likely never going to be
+unless the economic structures underlying these systems are overhauled completely.</p>
+<p>The second, less controversial reason is that the web is just a lot more diverse than it was before. It can be hard to reduce an entire website to a single feed of updates, although it really shouldn't be and this feels like a design flaw that can be remedied today itself. It is of course worth making a distinction between the &quot;document web&quot;- your news sites, blogs, personal websites, job listings, classifieds and so on- and the &quot;application web&quot;- intensive, interactive applications that aren't just read-only and typically require user input. The application web certainly has a place in the online landscape, but the document web undoubtedly deserves to be simpler to browse and access.</p>
+<p>If you want to escape the social dillemma and regain control over your consumption habits, there is nothing better than RSS. Here's how you can get started.</p>
+<p><strong>Picking a client</strong></p>
+<p>You need a client to view RSS feeds, and there are some great options out there for any platform of your choice.</p>
+<p>Cross-platform: There's a lot of cross-platform RSS services that let you follow your news and subscriptions on any device of your choosing, and even sync reading history so you are always up to date and never see any redundant information. Of these, my recommendations are <a href="https://tt-rss.org/">TinyTinyRSS</a> or <a href="https://miniflux.app/">Miniflux</a> if you can self-host, or <a href="https://theoldreader.com/">TheOldReader</a>, <a href="https://bazqux.com/">BazQux</a>, <a href="https://feedly.com/">Feedly</a>, <a href="https://www.inoreader.com/">InoReader</a> and <a href="https://www.newsblur.com/">NewsBlur</a> otherwise. All very solid services.</p>
+<p>Desktop: For Windows, <a href="https://www.microsoft.com/en-us/p/newsflow/9nblggh58s5r?activetab=pivot:overviewtab">NewsFlow</a> seems to be a pretty good option. Mac users can use <a href="https://www.reederapp.com/">Reeder</a>, which is pretty popular. Linux users have quite a few options available to them. For a more traditional GUI experience, I recommend <a href="https://gitlab.com/news-flash/news_flash_gtk">NewsFlash</a>, <a href="https://lzone.de/liferea/">Liferea</a> or <a href="https://quiterss.org/">QuiteRSS</a>. However, terminal users will find a lot of value in <a href="https://newsboat.org/">newsboat</a> or <a href="https://github.com/skeeto/elfeed">elfeed</a> if you use emacs.</p>
+<p>Mobile: On Android, the best reader I have found is <a href="https://play.google.com/store/apps/details?id=net.frju.flym&amp;hl=en_US&amp;gl=US">Flym</a>. <a href="https://www.reederapp.com/">Reeder</a> (linked above for MacOS) has an iOS client as well. If you're using any cross-platform service, their app/PWA is likely to be good too, and some 3rd party clients also let you hook them up to these services to sync your reading history.</p>
+<p><strong>Finding RSS Feeds</strong></p>
+<p>Modern RSS readers and services have search inbuilt that will let you add several sources without having to context-switch. A lot of sites you go to will put the RSS feed up front, typically in a header/footer or on the front page. However, this may not be true for quite a few sites due to the declining influence of RSS on the modern web. Fear not; all is not lost. A number of sites just have so much content that they might not put up the RSS link in a noticeable spot, or might just leave it in the source but not advertise it at all. Several websites are built on modern content management systems that all provide RSS feeds, while others still follow standard web practices and can be scraped to create feeds. It is worth trying the following:</p>
+<ol>
+<li>Add a /feed, or /rss, or /rss.xml or /feed.rss to the URL and see if it returns an XML file.</li>
+<li>On desktop, view the source for the site's front page and Ctrl+F to search for the words &quot;feed&quot;. &quot;rss&quot;, or &quot;atom&quot;.</li>
+<li>For reddit, you can add a &quot;.rss&quot; to the URL for any subreddit to get a feed for it.</li>
+<li>HackerNews RSS feeds are available at <a href="https://hnrss.org">HNRSS</a></li>
+<li>Finally, you can use <a href="https://rssbox.herokuapp.com/">RSSBox</a>, <a href="https://rss.app/">rss.app</a>, or <a href="http://fetchrss.com/">FetchRSS</a> to generate feeds for a variety of sites, social networks, and other services. The likes of <a href="https://www.datorss.com/">dato.rss</a> are also pretty useful if you want to search for feeds.</li>
+</ol>
+<p><strong>Conclusion</strong></p>
+<p>By relying on social media and big tech to curate our feeds for us, we become subservient to them, and very willing to stay within the bubbles they create for us. You can use RSS to reclaim this control, curate your own feeds, and read on your own terms.</p>
+<p>PS: If you're running a site of your own, keep an eye out for my next post, where I highlight how you can add an RSS feed to your site.</p>
+</main>
+</section>
+
+  </body>
+</html>

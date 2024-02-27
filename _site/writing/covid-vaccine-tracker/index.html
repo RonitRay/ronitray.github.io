@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Let's Build: COVID-19 Vaccination Tracker (for India) [Ronit Ray]</title>
+</head>
+<body>
+    <header>
+        <h1>Let's Build: COVID-19 Vaccination Tracker (for India)</h1>
+    </header>
+    <div class="date">
+        2021-05-05 | <a href="/">Ronit Ray</a>
+    </div>
+    <main>
+        <p>It's that time of the year. Birds are chirping, people are dying, your government has chosen to ignore a massive supply-side vaccine shortage, allowed manufacturers to set their own prices and opened up vaccine bookings for all citizens, thus shifting the onus to get vaccinated entirely upon you... perfectly normal and rather wonderful.</p>
+<p>The number of vaccines available in my city is extremely low at the moment. Hospitals declare stocks on the <a href="https://cowin.gov.in/">government portal</a> as they please, and then it is pretty much a game of fastest finger first to grab a booking. There are no notifications, and it takes a while to go from the login page to a page where you can actually make a booking. If traffic is high, this takes longer since the one-time password takes forever to arrive.</p>
+<p>At this rate, it would take forever to get vaccinated, and the process of checking for slots a billion times a day was driving me crazy. To their credit, however, the government provides a <a href="https://apisetu.gov.in/public/api/cowin">very simple API</a> for checking vaccine availability. With  a little code smarts, we should be able to knock up a simple tracker to automate the lookup process and give us an alert when a slot is available near us.</p>
+<h3>What We Have</h3>
+<p>The Co-Win API exposes the following data through REST web services:</p>
+<ol>
+<li><a href="https://apisetu.gov.in/public/api/cowin#/Metadata%20APIs/states">A list of Indian states,</a> from which we can grab the state ID we want to query.</li>
+<li><a href="https://apisetu.gov.in/public/api/cowin#/Metadata%20APIs/districts">A list of districts in a particular state,</a> from which we can grab the district ID we want to query.</li>
+<li><a href="https://apisetu.gov.in/public/api/cowin#/Appointment%20Availability%20APIs/calendarByDistrict">A list of vaccination sessions in the next 7 days in a particular district,</a> which is what we need and are going to use.</li>
+</ol>
+<p>It is worth noting that there is a web service to find vaccination sessions in the next week for a particular pincode, but the shortage is so bad that it's likely there won't be a vaccination center in your pincode for quite a while. You're probably better off driving to a center near you, which is what the above will help us identify.</p>
+<h3>What We Are Going to Do</h3>
+<p>We will:</p>
+<ol>
+<li><strong>Query the API at a regular interval</strong>, say every half an hour, to find all slots in the next week.</li>
+<li>We filter the results to find slots that are <strong>available</strong>, and <strong>open to our age group</strong></li>
+<li>If such an open slot is found, we must <strong>issue an alert</strong> somehow.</li>
+</ol>
+<p>My demo code will be in Python, but if you have the logic down, it is really easy to adapt to whatever language or framework you are comfortable in. I am a CLI person myself, but you can also extend this into a simple GUI for convenience. Some great projects in this vein are:</p>
+<ol>
+<li><a href="https://www.vaccinateme.in/covid/?type=district">VaccinateMe</a></li>
+<li><a href="https://getjab.in/">GetJab</a></li>
+<li><a href="https://findmyslots.com/">FindMySlots</a></li>
+</ol>
+<p>Hell, I might do so myself... my GitHub is awfully barren.</p>
+<p>A small note: the APIs only allow you to find open slots. Any action to actually reserve a vaccination booking for yourself is something you must do manually, as the web services to do so are protected and for authorized (not public) use only.</p>
+<p>Less talk, more code.</p>
+<h3>Step 1: Inputs</h3>
+<p>To query for slots, we need two input parameters:</p>
+<ol>
+<li>The DISTRICT ID in which we are looking for slots.</li>
+<li>The DATE from which we will be looking for slots.</li>
+</ol>
+<p>We first set up a BASE_DOMAIN for the service URL.</p>
+<pre><code class="language-python">BASE_DOMAIN = 'https://cdn-api.co-vin.in/api/v2/appointment/sessions/public/calendarByDistrict'
+</code></pre>
+<p>Following which, we define the district ID. Remember, there is a web service provided to find the district ID for your district.</p>
+<pre><code class="language-python">DISTRICT_ID = '500' 
+//pick any from the list
+</code></pre>
+<p>The date is needed in DD-MM-YYYY format as per the API specification. I'm more of an <a href="https://kirby.kevinson.org/blog/iso-8601-the-better-date-format/">ISO-8601</a> man myself, but we can't all be perfect. The standard way to deal with date-time formats is the <a href="https://docs.python.org/3/library/datetime.html">datetime</a> module.</p>
+<pre><code class="language-python">import datetime
+.
+.
+.
+date = datetime.datetime.now().strftime(&quot;%d-%m-%Y&quot;) 
+//the format expected by the API is DD-MM-YYYY
+</code></pre>
+<h3>Step 2: GET request</h3>
+<p>We must now form the URL and send an <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/GET">HTTP GET</a> request to it to fetch the available slots. Python handles HTTP stuff with the <a href="https://pypi.org/project/requests/">requests</a> library.</p>
+<pre><code class="language-python">import requests
+.
+.
+.
+url = BASE_DOMAIN + '?' + 'district_id=' + DISTRICT_ID + '&amp;' + 'date=' + today_date
+
+service_response = requests.get(url)
+</code></pre>
+<p>What this does is pretty simple, it sends a GET request to the URL, and whatever response received is stored in the service_response variable.</p>
+<p>When dealing with HTTP requests, it's important to account for errors and exceptions. A request that is successfully handled by the server is marked by an HTTP code of <strong>200</strong> in the response. Any code other than that signifies a different type of error (404 is Not Found (maybe the URL was malformed or has changed), 403 is Forbidden (access denied for some reason), 405 is method not allowed (GET expected but POST sent or vice versa) and so on).</p>
+<p>Further, there could be other errors in the pipeline. Say your internet connection isn't working- your request will not really go anywhere and your program will be looking for a response that won't arrive. This kind of unexpected behavior is called an Exception and can be handled in python.</p>
+<p>The sys module has a number of useful methods to deal with interpreter variables like exceptions. We can handle all exceptions in one fell swoop and also account for HTTP errors like this:</p>
+<pre><code class="language-python">import sys
+.
+.
+.
+try:
+    service_response = requests.get(url)              
+        if service_response.status_code == 200:
+            //handle successful response
+        else : 
+           print(&quot;ERROR: &quot; + str(service_response.status_code) + &quot;:&quot; + service_response.text)
+except:
+    print(&quot;Unexpected error:&quot;, sys.exc_info()[0] + &quot; at &quot; + str(sys.exc_info()[2]))                 
+</code></pre>
+<h3>Step 3: Handling Response JSON</h3>
+<p>The sample response JSON for the calendarByDistrict web service is:</p>
+<pre><code class="language-json">{
+  &quot;centers&quot;: [
+    {
+      &quot;center_id&quot;: 1234,
+      &quot;name&quot;: &quot;District General Hostpital&quot;,
+      &quot;name_l&quot;: &quot;&quot;,
+      &quot;address&quot;: &quot;45 M G Road&quot;,
+      &quot;address_l&quot;: &quot;&quot;,
+      &quot;state_name&quot;: &quot;Maharashtra&quot;,
+      &quot;state_name_l&quot;: &quot;&quot;,
+      &quot;district_name&quot;: &quot;Satara&quot;,
+      &quot;district_name_l&quot;: &quot;&quot;,
+      &quot;block_name&quot;: &quot;Jaoli&quot;,
+      &quot;block_name_l&quot;: &quot;&quot;,
+      &quot;pincode&quot;: &quot;413608&quot;,
+      &quot;lat&quot;: 28.7,
+      &quot;long&quot;: 77.1,
+      &quot;from&quot;: &quot;09:00:00&quot;,
+      &quot;to&quot;: &quot;18:00:00&quot;,
+      &quot;fee_type&quot;: &quot;Free&quot;,
+      &quot;vaccine_fees&quot;: [
+        {
+          &quot;vaccine&quot;: &quot;COVISHIELD&quot;,
+          &quot;fee&quot;: &quot;250&quot;
+        }
+      ],
+      &quot;sessions&quot;: [
+        {
+          &quot;session_id&quot;: &quot;3fa85f64-5717-4562-b3fc-2c963f66afa6&quot;,
+          &quot;date&quot;: &quot;31-05-2021&quot;,
+          &quot;available_capacity&quot;: 50,
+          &quot;min_age_limit&quot;: 18,
+          &quot;vaccine&quot;: &quot;COVISHIELD&quot;,
+          &quot;slots&quot;: [
+            &quot;FORENOON&quot;,
+            &quot;AFTERNOON&quot;
+          ]
+        }
+      ]
+    }
+  ]
+}
+</code></pre>
+<p>The top-level object is an array of <code>center</code> objects. Each center object has specific details like the name, address, type of vaccine, cost etc. The attribute we need is called <code>sessions</code>, and it is an array of objects, each describing the vaccine sessions a center has open in the next week. Each session has the age limit and slots specified.</p>
+<p>We get the response JSON and filter it as follows:</p>
+<pre><code class="language-python">AGE_BRACKET = 45 //for ages 45-60
+found_flag = False //set to true if valid sessions are found
+.
+.
+.
+json_body = service_response.json()            
+for center in json_body[&quot;centers&quot;]:
+    sessions = center[&quot;sessions&quot;]
+    for session in sessions:
+        if (session[&quot;min_age_limit&quot;] == AGE_BRACKET and session[&quot;available_capacity&quot;] &gt; 0):
+            found_flag = True
+            print(&quot;FOUND!!! UwU \n&quot;)
+            print(&quot;on&quot;+ session[&quot;date&quot;] + &quot;, Available: &quot; + str(session[&quot;available_capacity&quot;]) + &quot;\n&quot;)
+            print(center[&quot;name&quot;] + '\n' + center[&quot;address&quot;] + '\n' + session[&quot;vaccine&quot;])
+            print('\n')
+</code></pre>
+<h3>Step 4: Alert If Valid Slots are Found</h3>
+<p>As mentioned earlier, if a slot is found, the system needs to issue an alert so we can go and grab a booking as soon as possible. This can be through an email, a telegram message, changing the color of the RGB lights in your room... the sky is the limit. I'll just be playing  a beep noise thrice for demonstration purposes.
+The simplest way to do this is with the <a href="https://pypi.org/project/playsound/">playsound</a> module. This minimalist module has no dependencies and does only one thing- it plays a sound. You can grab a royalty free track of anything online, like a <a href="https://www.soundjay.com/beep-sounds-1.html">beep</a>, and go ham.</p>
+<pre><code class="language-python">from playsound import playsound
+.
+.
+.
+if found_flag == True:
+	//beep thrice!
+    playsound('beep.mp3')
+    playsound('beep.mp3')
+    playsound('beep.mp3')
+else:
+    print(&quot;not found :( &quot;)
+</code></pre>
+<h3>Step 5: Running this job at regular intervals</h3>
+<p>Now that we have a routine to check for available slots, all that is left is automating the process so it runs at a defined interval. Python has a library for literally everything, so it's no surprise that the <a href="https://schedule.readthedocs.io/en/stable/">schedule</a> library is here to save the day.</p>
+<p>The first thing you do is to put the entire logic (generating the URL to sending the request, handling the response, and the alert) in a method of its own. This method will be the job that our scheduler runs.</p>
+<p>Once this method, say <code>search()</code> is ready, we can schedule it to run at our desired frequency as follows:</p>
+<pre><code class="language-python">schedule.every(30).minutes.do(search)
+
+while True:
+    schedule.run_pending()
+    time.sleep(1)
+</code></pre>
+<p>Remember to be gentle... if you query this too often, the CDN will likely rate-limit you or block you from accessing the API for a while (returning 403 for every request). Aaaand, we're all wrapped up. You can find the complete program on my Github <a href="https://github.com/RonitRay/vaxscene-cli">here</a>.</p>
+<h3>A Disclaimer Before We Go</h3>
+<p>The idea behind this program is to use publicly available APIs and data provided by the Indian government to expedite the slot booking process and reduce the friction overall. I don't encourage or condone any untoward behavior including abuse of the public APIs, using bots beyond the alert process (eg. for automating bookings and so on) or any other illegal or immoral activity. If any objections are brought forward or if someone brings to my notice that it is wrong to use such a program, I will take the post and the git repository down. I encourage everyone undertaking something like this project to deal in good faith only and ensure we, as a population, do everything in our capacity to get vaccinated as soon as possible and push back against the pandemic.</p>
+
+    </main>    
+</body>
+<style>
+   :root {
+        --bg: white;
+        --fg: #080808;
+    }
+
+    body {
+        background: var(--bg);
+        color: var(--fg);
+        font-family: sans-serif;
+        font-size: 1em;
+        line-height: 1.5;
+        width: 90%;
+        max-width: 70ch;
+        margin: auto;
+    }
+
+    h1 {
+        font-size: 1.5em;
+    }
+
+    h2 {
+        font-size: 1.35em;
+    }
+
+    h3 {
+        font-size: 1.2em;
+    }
+
+    .post-listing {
+        margin: 1rem auto;
+    }
+
+    a, a:visited {
+        color: var(--fg);
+    }
+
+    .date {
+        font-style: italic;
+    }
+</style>
+</html>

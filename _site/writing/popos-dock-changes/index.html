@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fix the Dock on PopOS for Productivity and Profit [Ronit Ray]</title>
+</head>
+<body>
+    <header>
+        <h1>Fix the Dock on PopOS for Productivity and Profit</h1>
+    </header>
+    <div class="date">
+        2021-08-07 | <a href="/">Ronit Ray</a>
+    </div>
+    <main>
+        <p>After years on KDE and then a variety of minimal window managers, I installed <a href="https://pop.system76.com/">System76's PopOS</a> on my personal laptop a few months ago. GNOME has, historically, really not been my thing, but I've come to really appreciate the way Pop does things.</p>
+<p>In many ways Pop has provided a very sane, quick set of defaults that gets out of my way and doesn't need me to tweak much to get started and go about my work. The new <a href="https://blog.system76.com/post/655369428109869056/popos-2104-a-release-of-cosmic-proportions">COSMIC desktop</a>, which is what they call their collection of tweaks on top of GNOME, brings quite a few usability improvements. One of these is the <a href="https://github.com/pop-os/cosmic-dock/">Cosmic Dock</a>, which seems to be some kind of fork of the GNOME extension <a href="https://github.com/micheleg/dash-to-dock">Dash to Dock</a>.</p>
+<p>This is pretty cool for laptop users who don't always want to be using keyboard shortcuts to open up applications or switch between them. Using my thumb to navigate while typing with my fingers has been pretty good for me. That said, the default behaviour of the dock is a bit unnatural to me: you can't click on an icon to minimize the window, and if you have multiple instances of the program open, you click on the icon to cycle through the open instances. I would like this to bring up a preview and let me pick which instance to go to directly, which is what panels on KDE and the like usually do.</p>
+<p>Turns out this is fully possible, with a little tinkering under the hood. Here's how:</p>
+<ol>
+<li>Install <code>dconf-editor</code> from apt or your package manager</li>
+<li>In <code>dconf-editor</code>
+<ol>
+<li>Navigate to <code>org.gnome.shell.extensions.dash-to-dock</code></li>
+<li>Set the <code>click-action</code> to <code>minimize-or-previews</code>. This does:
+<ol>
+<li>Single app in background, focus it.</li>
+<li>Multiple apps in background, show the previews so you can pick the app you want.</li>
+<li>App already focused, minimize it.</li>
+</ol>
+</li>
+</ol>
+</li>
+</ol>
+<p>This works about as well as I want it to now. Thanks to Nathanael Anderson for providing <a href="https://github.com/pop-os/cosmic-dock/issues/21">the solution</a> on GitHub.</p>
+
+    </main>    
+</body>
+<style>
+   :root {
+        --bg: white;
+        --fg: #080808;
+    }
+
+    body {
+        background: var(--bg);
+        color: var(--fg);
+        font-family: sans-serif;
+        font-size: 1em;
+        line-height: 1.5;
+        width: 90%;
+        max-width: 70ch;
+        margin: auto;
+    }
+
+    h1 {
+        font-size: 1.5em;
+    }
+
+    h2 {
+        font-size: 1.35em;
+    }
+
+    h3 {
+        font-size: 1.2em;
+    }
+
+    .post-listing {
+        margin: 1rem auto;
+    }
+
+    a, a:visited {
+        color: var(--fg);
+    }
+
+    .date {
+        font-style: italic;
+    }
+</style>
+</html>
